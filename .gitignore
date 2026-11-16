@@ -1,0 +1,6 @@
+.work/
+__pycache__/
+*.pyc
+output/tech_cartoon.mp4
+output/voice.wav
+output/voice.mp3

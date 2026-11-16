@@ -1,0 +1,63 @@
+name: Render Tech Cartoon & Release
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'story.json'
+      - 'scripts/**'
+      - 'assets/sprites/**'
+      - 'assets/audio/**'
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libopenh264-enc || true
+          pip install -q edge-tts pillow numpy
+
+      - name: Generate voices (if missing)
+        run: |
+          if [ ! -f assets/audio/line_01.mp3 ]; then
+            python scripts/voice.py
+            python scripts/amplitude.py
+          fi
+
+      - name: Render frames & encode MP4
+        run: python scripts/render.py
+
+      - name: Mix audio track
+        run: python scripts/mix_audio.py
+
+      - name: Mux audio into video
+        run: |
+          ffmpeg -y -loglevel error -i output/tech_cartoon.mp4 -i output/voice.wav \
+            -c:v copy -c:a aac -b:a 192k -shortest output/tech_cartoon_final.mp4
+
+      - name: Create/Update GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view v1.0.0 >/dev/null 2>&1 || \
+            gh release create v1.0.0 --title "Tech Comedy Cartoon - Free iPhone Ka Chakkar 🤣" \
+              --notes "Fully rigged 2D cartoon: lip-sync, blinking, gestures, parallax, meme FX. 1080x1920 MP4."
+          gh release upload v1.0.0 output/tech_cartoon_final.mp4 --clobber
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tech-cartoon-mp4
+          path: output/tech_cartoon_final.mp4

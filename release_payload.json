@@ -1,0 +1,7 @@
+{
+  "tag_name": "v1.0.0",
+  "name": "Tech Comedy Cartoon - Free iPhone Ka Chakkar 🤣",
+  "body": "Fully rigged 2D cartoon comedy short for YouTube.\n\nNO slideshow - every frame is animated in Python with a character rig:\n- Jaw-morph lip-sync (mouth moves with the actual voice amplitude)\n- Blinking eyes, head bob/tilt, 6 full-body gesture poses\n- Parallax backgrounds, meme sticker pops, camera shake/zoom/flash\n- 3 distinct AI voices with Hinglish comic timing\n\n1080x1920 vertical MP4, 24fps, ~65 seconds.\n\nDownload tech_cartoon_final.mp4 below. To edit the script, expressions, voices or FX, edit story.json in the repo - the GitHub Action re-renders and re-releases the MP4 automatically on push.",
+  "draft": false,
+  "prerelease": false
+}
